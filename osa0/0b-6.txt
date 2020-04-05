@@ -1,0 +1,9 @@
+title Single Page App lomakkeen lähetys
+note over Selain
+Sivulla ajettava javascript
+lisää uuden muistiinpanon "notes"-elementtiin
+ja tekee Post pyynnön, johon on liitetty
+uuden muistiinpanon sisältävä json
+end note
+Selain->Palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+Palvelin-->Selain: {"message":"note created"}

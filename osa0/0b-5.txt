@@ -1,0 +1,19 @@
+title Single Page Appin lataaminen
+
+Selain->Palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa
+Palvelin-->Selain: HTML-koodi
+Selain->Palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+Palvelin-->Selain: Main.css
+Selain->Palvelin: https://fullstack-exampleapp.herokuapp.com/spa.js
+Palvelin-->Selain: Spa.js
+note over Selain: 
+Selain alkaa suorittaa javascript koodia
+javascrip pyytää data.json:n serveriltä
+end note
+Selain->Palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+Palvelin-->Selain: data.json: [{"content":"HTML on helppoa","date":"2017-12...
+note over Selain:
+Selain suorittaa parsintafunktion
+vastaanotetulle datalle ja
+lisää datan sivu "notes"-elementtiin
+end note
