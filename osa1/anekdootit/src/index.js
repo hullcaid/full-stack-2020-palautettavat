@@ -7,32 +7,69 @@ const Button = (props) => (
   </button>
 )
 
+const Header = (props) => (
+  <h1>{props.text}</h1>
+)
+
+const Anecdote = (props) => {
+  const {text, votes} = props
+  return (
+    <div>
+      <div>{text}</div>
+      <div>has {votes} votes</div>
+    </div>
+  )
+}
+
+const CalculateIndexOfHighesValue = (arr) => {
+  // console.log(arr)
+  // console.log('Caunting highest index...')
+  var max = arr[0]
+  var maxIndex = 0
+
+  for (var i = 1; i < arr.length; i++) {
+    if (arr[i] > max) {
+      maxIndex = i
+      max = arr[i]
+    }
+  }
+  return maxIndex
+
+}
+
+const GetRandom = (maxValue) =>(
+  Math.floor(Math.random() * maxValue)
+)
 
 const App = (props) => {
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(Array.apply(null, new Array(anecdotes.length)).map(Number.prototype.valueOf,0))
 
-  console.log(votes)
+  // console.log(votes)
   
-  const random = () => (
-    Math.floor(Math.random() * anecdotes.length)
-  )
-
+  const mostVoted = CalculateIndexOfHighesValue(votes)
+ 
   const handleVote = () => {
     const newVotes = [...votes]
+    // console.log(newVotes)
     newVotes[selected] ++
+     // console.log(newVotes)
     setVotes(newVotes)
   }
 
   return (
     <div>
-      <div>{props.anecdotes[selected]}</div>
-      <div>has {votes[selected]} votes</div>
+      <Header text='Anecdote of the day' />
+      <Anecdote text={props.anecdotes[selected]} votes={votes[selected]} />
       <Button handleClick={handleVote} text = 'vote' />
-      <Button handleClick={() => setSelected(random)} text='next anecdote' />
+      <Button handleClick={() => setSelected(GetRandom(props.anecdotes.length))} text='next anecdote' />
+      <Header text='Anecdote with most votes' />
+      <Anecdote text={props.anecdotes[mostVoted]} votes={votes[mostVoted]} />
     </div>
   )
 }
+
+
 
 const anecdotes = [
   'If it hurts, do it more often',
