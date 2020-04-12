@@ -26,26 +26,32 @@ const Statistics =(props) => {
       return 0
     }
     const ratio = ((good / all) *100)
-    console.log(ratio+ " %")
     return (ratio + ' %')
   }
 
   return(
     <div>
       <h1>statistics</h1>
-      <StatisticLine text='good:' value={good} />
-      <StatisticLine text='neutral:' value={neutral} />
-      <StatisticLine text='bad:' value={bad} />
-      <StatisticLine text='all:' value={all} />
-      <StatisticLine text='average:' value={average()} />
-      <StatisticLine text='positive:' value={positiveRatio()} />
+      <table>
+        <tbody>
+          <StatisticLine text='good:' value={good} />
+          <StatisticLine text='neutral:' value={neutral} />
+          <StatisticLine text='bad:' value={bad} />
+          <StatisticLine text='all:' value={all} />
+          <StatisticLine text='average:' value={average()} />
+          <StatisticLine text='positive:' value={positiveRatio()} />
+        </tbody>
+      </table>
     </div>
   )
 
 }
 
 const StatisticLine = (props) => (
-  <div>{props.text} {props.value}</div>
+  <tr>
+    <td>{props.text}</td>
+    <td> {props.value}</td>
+  </tr>
 )
 
 const Button = (props) => (
