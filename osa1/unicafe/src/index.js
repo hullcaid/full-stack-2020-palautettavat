@@ -5,6 +5,15 @@ const Statistics =(props) => {
   const {good, neutral, bad} = props
   const all = good+neutral+bad
 
+  if (all === 0) {
+    return(
+      <div>
+        <h1>statistics</h1>
+        No feedback given
+      </div>
+    )
+  }
+
   const average = () => {
     if(all === 0) {
       return 0
@@ -42,12 +51,6 @@ const App = () => {
   const handleGood = () => setGood(good + 1)
   const handleNeutral = () => setNeutral(neutral + 1)
   const handleBad = () => setBad(bad + 1)
-  
-  
-  
-  
-
-  
 
   return (
     <div>
