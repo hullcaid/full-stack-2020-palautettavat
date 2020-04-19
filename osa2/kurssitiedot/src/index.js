@@ -2,23 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 const Course = (props) => {
-  console.log(props)
+  //console.log(props)
   return(
     <div>
       <Header course={props.course.name} />
       <Content parts={props.course.parts} />
+      <Total parts={props.course.parts.map(part => part.exercises)} />
     </div>
   )
 }
 const Header = (props) => {
-  console.log(props)
+  //console.log(props)
   return(
     <h1>{props.course}</h1>
   )
 }
 
 const Content = (props) => {
-  console.log(props)
+  //console.log(props)
   return(
     <div>
       {props.parts.map(part => <Part key={part.id} part={part.name} exercises={part.exercises}/>)}
@@ -35,9 +36,11 @@ const Part = (props) => {
 }
 
 const Total = (props) => {
+  console.log(props)
+  const total = props.parts.reduce( (accumulator, currentValue)=> accumulator + currentValue)
   return(
     <p>
-      Number of Exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}
+      Number of Exercises {total}
     </p>
   )
 }
