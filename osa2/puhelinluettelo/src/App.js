@@ -19,9 +19,18 @@ const App = () => {
   const handleSubmit = (event) =>{
 	  event.preventDefault()
 	  if (persons.filter(person => person.name === newName).length > 0) {
-		window.alert(`${newName} is already added to phonebook`)
-	  }
-	  else {
+      if(window.confirm(`${newName} is already added to phonebook, do you want to replace the old number with a new one?`)){
+        const person = persons.find(person => person.name === newName)
+        const changedPerson = {...person, number: newNumber}
+
+        listingService.modify(person.id, changedPerson)
+          .then(response => {
+            setPersons(persons.map(person => person.id !== response.id ? person : response))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+	  } else {
 		const personObject = {
       name: newName,
       number: newNumber
@@ -52,7 +61,7 @@ const App = () => {
   const handleRemoveButton = (id) => {
     // console.log('pressed ', id)
     // console.log(persons)
-    const personToDelete = persons.filter(person => person.id === id)[0]
+    const personToDelete = persons.find(person => person.id === id)
     // console.log(personToDelete)
     if(window.confirm(`Delete ${personToDelete.name}?`)) {
       // console.log(`Deleting ${personToDelete.name}`)
