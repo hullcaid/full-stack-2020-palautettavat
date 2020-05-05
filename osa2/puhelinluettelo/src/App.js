@@ -16,19 +16,6 @@ const App = () => {
   },
   [])
   
-  const handleNewNameChange = (event) => {
-	  setNewName(event.target.value)
-  }
-
-  const handleNewNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
-
-  const handleFilterChange = (event) => {
-    const filterValue = event.target.value
-    setFilterString(filterValue)
-  }
-
   const handleSubmit = (event) =>{
 	  event.preventDefault()
 	  if (persons.filter(person => person.name === newName).length > 0) {
@@ -47,7 +34,33 @@ const App = () => {
         setFilterString('')
       })
 	  }
-    
+  }  
+  
+  const handleNewNameChange = (event) => {
+	  setNewName(event.target.value)
+  }
+
+  const handleNewNumberChange = (event) => {
+    setNewNumber(event.target.value)
+  }
+
+  const handleFilterChange = (event) => {
+    const filterValue = event.target.value
+    setFilterString(filterValue)
+  }
+
+  const handleRemoveButton = (id) => {
+    // console.log('pressed ', id)
+    // console.log(persons)
+    const personToDelete = persons.filter(person => person.id === id)[0]
+    // console.log(personToDelete)
+    if(window.confirm(`Delete ${personToDelete.name}?`)) {
+      // console.log(`Deleting ${personToDelete.name}`)
+      listingService.remove(id)
+        .then(
+          setPersons(persons.filter(person => person.id !== id))
+        )
+    }
   }
 
   return (
@@ -62,7 +75,7 @@ const App = () => {
         handleNumberChange={handleNewNumberChange}
         handleSubmit={handleSubmit} />
       <h2>Numbers</h2>
-		  <Persons persons={persons} filterValue={filterString} />
+		  <Persons persons={persons} filterValue={filterString} handleDelete={handleRemoveButton}/>
     </div>
   )
 

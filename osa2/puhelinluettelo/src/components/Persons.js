@@ -1,11 +1,12 @@
 import React from 'react'
 import Person from './Person'
 
-const Persons = ({persons, filterValue}) => {
-    if(filterValue.length === 0){
+const Persons = ({persons, filterValue, handleDelete}) => { 
+  // console.log(handleDelete)
+  if(filterValue.length === 0){
       return(
       <ul>
-        {persons.map(person => <Person key={person.name} name={person.name} number={person.number}/>)}
+        {persons.map(person => <Person key={person.id} id={person.id} name={person.name} number={person.number} handleDelete={handleDelete}/>)}
       </ul>)
     }
     return(
@@ -13,7 +14,7 @@ const Persons = ({persons, filterValue}) => {
       {persons
       .filter(person => person.name.toLowerCase().includes(filterValue.toLowerCase()))
       .map(filteredPerson => 
-        <Person key={filteredPerson.name} name={filteredPerson.name} number={filteredPerson.number}/>)}
+        <Person key={filteredPerson.id} id={filteredPerson.id} name={filteredPerson.name} number={filteredPerson.number} handleDelete={handleDelete}/>)}
       </ul>
       )
   }
