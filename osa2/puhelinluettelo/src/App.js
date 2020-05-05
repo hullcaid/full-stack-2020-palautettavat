@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
+import listingService from './services/persons'
 
 const App = () => {
   const [ persons, setPersons] = useState([]) 
@@ -11,22 +11,16 @@ const App = () => {
   const [ filterString, setFilterString] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
+    listingService.getAll()
+    .then(response => setPersons(response))
   },
   [])
-  console.log('redered', persons.length)
   
   const handleNewNameChange = (event) => {
-	  //console.log(event.target.value)
 	  setNewName(event.target.value)
   }
 
   const handleNewNumberChange = (event) => {
-    //console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
@@ -45,10 +39,9 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    axios
-      .post('http://localhost:3001/persons', personObject)
+    listingService.create(personObject)
       .then(response => {
-        setPersons(persons.concat(response.data))
+        setPersons(persons.concat(response))
         setNewName('')
         setNewNumber('')
         setFilterString('')
