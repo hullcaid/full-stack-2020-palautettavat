@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import listingService from './services/persons'
+import './index.css'
+
 
 const App = () => {
   const [ persons, setPersons] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filterString, setFilterString] = useState('')
+  const [ notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     listingService.getAll()
@@ -28,6 +32,10 @@ const App = () => {
             setPersons(persons.map(person => person.id !== response.id ? person : response))
             setNewName('')
             setNewNumber('')
+            setNotificationMessage(`Changed ${response.name}`)
+            setTimeout(()=>{
+              setNotificationMessage(null)
+            }, 5000)
           })
       }
 	  } else {
@@ -41,6 +49,10 @@ const App = () => {
         setNewName('')
         setNewNumber('')
         setFilterString('')
+        setNotificationMessage(`Added ${response.name}`)
+        setTimeout(()=> {
+          setNotificationMessage(null)
+        }, 5000)
       })
 	  }
   }  
@@ -66,15 +78,20 @@ const App = () => {
     if(window.confirm(`Delete ${personToDelete.name}?`)) {
       // console.log(`Deleting ${personToDelete.name}`)
       listingService.remove(id)
-        .then(
+        .then(()=>{
           setPersons(persons.filter(person => person.id !== id))
-        )
+          setNotificationMessage(`Removed ${personToDelete.name}`)
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
+        })
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage}/>
       <Filter filterValue={filterString} handleFilterChange={handleFilterChange}/>
       <h2>Add new</h2>
       <PersonForm 
