@@ -32,21 +32,11 @@ const App = () => {
             setPersons(persons.map(person => person.id !== response.id ? person : response))
             setNewName('')
             setNewNumber('')
-            setNotificationType('notification')
-            setNotificationMessage(`Changed ${response.name}`)
-            setTimeout(()=>{
-              setNotificationMessage(null)
-              setNotificationType(null)
-            }, 5000)
+            notify('notification', `Changed ${response.name}`)
           })
           .catch(error => {
-            setNotificationType('error')
-            setNotificationMessage(`${changedPerson.name} was not found from the server`)
+            notify('error', `${changedPerson.name} was not found from the server`)
             setPersons(persons.filter(person => person.id !== changedPerson.id))
-            setTimeout(() => {
-              setNotificationMessage(null)
-              setNotificationType(null)
-            }, 5000)
           })
       }
 	  } else {
@@ -60,15 +50,24 @@ const App = () => {
         setNewName('')
         setNewNumber('')
         setFilterString('')
-        setNotificationType('notification')
-        setNotificationMessage(`Added ${response.name}`)
-        setTimeout(()=> {
-          setNotificationMessage(null)
-          setNotificationType(null)
-        }, 5000)
+        notify('notification', `Added ${response.name}`)
+      })
+      .catch(error =>{
+        //console.log(error.response.data.error)
+        notify('error', error.response.data.error)
       })
 	  }
   }  
+
+  const notify = (type, message) => {
+    //console.log(type, ': ', message)
+    setNotificationType(type)
+    setNotificationMessage(message)
+    setTimeout(() => {
+      setNotificationMessage(null)
+      setNotificationType(null)
+    }, 5000)
+  }
   
   const handleNewNameChange = (event) => {
 	  setNewName(event.target.value)
@@ -84,21 +83,12 @@ const App = () => {
   }
 
   const handleRemoveButton = (id) => {
-    // console.log('pressed ', id)
-    // console.log(persons)
     const personToDelete = persons.find(person => person.id === id)
-    // console.log(personToDelete)
     if(window.confirm(`Delete ${personToDelete.name}?`)) {
-      // console.log(`Deleting ${personToDelete.name}`)
       listingService.remove(id)
         .then(()=>{
           setPersons(persons.filter(person => person.id !== id))
-          setNotificationType('notification')
-          setNotificationMessage(`Removed ${personToDelete.name}`)
-          setTimeout(() => {
-            setNotificationMessage(null)
-            setNotificationType(null)
-          }, 5000)
+          notify('notification', `Removed ${personToDelete.name}`)
         })
     }
   }
