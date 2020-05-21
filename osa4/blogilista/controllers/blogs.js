@@ -1,8 +1,9 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const logger = require('../utils/logger')
 
 blogsRouter.get('/', (request, response) => {
-  console.log('GET request received')
+  logger.info('GET request received')
   Blog
     .find({})
     .then(blogs => {
@@ -11,7 +12,7 @@ blogsRouter.get('/', (request, response) => {
 })
 
 blogsRouter.post('/', (request, response) => {
-  console.log('POST request received')
+  logger.info('POST request received')
   
   const blog = new Blog(request.body)
 
