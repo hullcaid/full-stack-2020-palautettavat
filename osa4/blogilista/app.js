@@ -8,8 +8,8 @@ const logger = require('./utils/logger')
 
 
 const mongoUrl = config.MONGODB_URI
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true})
-  .then(() =>{
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
     logger.info('Connected to database')
   })
 
