@@ -59,7 +59,17 @@ test('empty likes field is converted to zero', async () => {
 
   const finalList = await helper.blogsInDB()
   expect(finalList[helper.initialBlogs.length].likes).toBe(0)
+})
 
+test('adding blogs without title and url return an error', async () => {
+  const objectToAdd = {
+    author: 'Added Name',
+    likes: 3
+  }
+
+  await api.post('/api/blogs/')
+    .send(objectToAdd)
+    .expect(400)
 })
 
 afterAll(() => {
