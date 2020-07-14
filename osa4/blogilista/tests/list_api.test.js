@@ -45,6 +45,23 @@ test('adding blogs', async () => {
   expect(titles).toContain('Added Title')
 })
 
+test('empty likes field is converted to zero', async () => {
+  const objectToAdd = {
+    title: 'Added Title',
+    author: 'Added Name',
+    url: 'http://urlAdded.html'
+  }
+
+  await api.post('/api/blogs/')
+    .send(objectToAdd)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const finalList = await helper.blogsInDB()
+  expect(finalList[helper.initialBlogs.length].likes).toBe(0)
+
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
