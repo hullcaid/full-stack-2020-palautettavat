@@ -25,6 +25,26 @@ test('id property is defined', async () => {
   expect(response[0].id).toBeDefined()
 })
 
+test('adding blogs', async () => {
+  const objectToAdd = {
+    title: 'Added Title',
+    author: 'Added Name',
+    url: 'http://urlAdded.html',
+    likes: 7
+  }
+
+  await api.post('/api/blogs')
+    .send(objectToAdd)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const finalList = await helper.blogsInDB()
+  expect(finalList).toHaveLength(helper.initialBlogs.length +1)
+
+  const titles = finalList.map(r => r.title)
+  expect(titles).toContain('Added Title')
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
