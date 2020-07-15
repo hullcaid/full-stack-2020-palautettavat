@@ -91,6 +91,26 @@ describe('with a initialized database', () => {
       expect(ids).not.toContain(blogToDelete.id)
     })
   })
+
+  describe('modifying blogs', () => {
+    test('modifying likes', async () => {
+      const blogsAtStart = await helper.blogsInDB()
+      const blogToModify = blogsAtStart[0]
+      const modifiedBlog = { ...blogToModify, likes: 7 }
+
+      const response = await api.put(`/api/blogs/${blogToModify.id}`)
+        .send(modifiedBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      expect(response.body.title).toBe(blogToModify.title)
+
+      const finalEntry = await api.get(`/api/blogs/${blogToModify.id}`)
+        .expect(200)
+
+      expect(finalEntry.body.likes).toBe(modifiedBlog.likes)
+    })
+  })
 })
 
 afterAll(() => {
