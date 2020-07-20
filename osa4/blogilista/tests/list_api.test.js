@@ -1,14 +1,16 @@
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 
 
-describe('with a initialized database', () => {
+describe('with a initialized blog database', () => {
 
   beforeEach(async () => {
     await Blog.deleteMany({})
@@ -111,6 +113,50 @@ describe('with a initialized database', () => {
       expect(finalEntry.body.likes).toBe(modifiedBlog.likes)
     })
   })
+})
+
+describe('with initialized user database', () =>{
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', name: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('get to api returns correct amount of users', async () => {
+    const usersAtStart = await helper.usersInDB()
+
+    const results = await api.get('/api/users/')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(results.body.length).toBe(usersAtStart.length)
+  })
+
+  test('creating a new unique user', async () => {
+    const usersAtStart = await helper.usersInDB()
+
+    const newUser = {
+      username: 'lesjui',
+      name: 'Leiska Jantteri',
+      password: 'sanasana',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
+
 })
 
 afterAll(() => {
