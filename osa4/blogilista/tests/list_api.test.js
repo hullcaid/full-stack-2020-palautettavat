@@ -132,7 +132,7 @@ describe('with initialized user database', () =>{
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    expect(results.body.length).toBe(usersAtStart.length)
+    expect(results.body).toHaveLength(usersAtStart.length)
   })
 
   test('creating a new unique user', async () => {
@@ -155,6 +155,109 @@ describe('with initialized user database', () =>{
 
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
+  })
+
+  test('username must be unique', async () => {
+    const usersAtStart = await helper.usersInDB()
+
+    const newUser = {
+      username: 'root',
+      name: 'wrong root',
+      password: 'gagaaa'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('`username` to be unique')
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('adding user without username fails', async () => {
+    const usersAtStart = await helper.usersInDB()
+
+    const newUser = {
+      name: 'no username',
+      password: 'gagaaa'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('`username` is required')
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('adding user without password fails', async () => {
+    const usersAtStart = await helper.usersInDB()
+
+    const newUser = {
+      username: 'noPass',
+      name: 'no Password'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('`password` missing')
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('adding user with too short username fails', async () => {
+    const usersAtStart = await helper.usersInDB()
+
+    const newUser = {
+      username: 'shr',
+      name: 'too short username',
+      password: 'gagaaa'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('is shorter than the minimum allowed length (4)')
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('adding user with too short password fails', async () => {
+    const usersAtStart = await helper.usersInDB()
+
+    const newUser = {
+      username: 'shortPass',
+      name: 'too short password',
+      password: 'shr'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('`password` must be over 3 characters long')
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 
 })
