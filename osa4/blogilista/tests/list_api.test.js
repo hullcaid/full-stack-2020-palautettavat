@@ -7,6 +7,7 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const { usersInDB } = require('./test_helper')
 
 
 
@@ -115,14 +116,36 @@ describe('with a initialized blog database', () => {
   })
 })
 
-describe('with initialized user database', () =>{
+describe('with initialized user database', () => {
   beforeEach(async () => {
     await User.deleteMany({})
+    await Blog.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
     const user = new User({ username: 'root', name: 'root', passwordHash })
 
     await user.save()
+  })
+
+  test('added blogs have user reference user', async () => {
+    const newBlog = {
+      title: 'Added Title',
+      author: 'Added Name',
+      url: 'http://urlAdded.html',
+      likes: 4,
+    }
+
+    const result = await api.post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd[0].blogs[0].toString()).toContain(result.body.id)
+
+    const blogsAtEnd = await helper.blogsInDB()
+    expect(blogsAtEnd[0].user.toString()).toContain(usersAtEnd[0].id)
+
   })
 
   test('get to api returns correct amount of users', async () => {
