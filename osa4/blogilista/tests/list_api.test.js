@@ -7,7 +7,7 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const { usersInDB } = require('./test_helper')
+const { usersInDB, addAUser } = require('./test_helper')
 
 
 
@@ -121,10 +121,7 @@ describe('with initialized user database', () => {
     await User.deleteMany({})
     await Blog.deleteMany({})
 
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', name: 'root', passwordHash })
-
-    await user.save()
+    await addAUser()
   })
 
   test('added blogs have user reference user', async () => {
@@ -281,6 +278,57 @@ describe('with initialized user database', () => {
 
     const usersAtEnd = await helper.usersInDB()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+})
+
+describe('token authentication tests', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+    await Blog.deleteMany({})
+
+    await addAUser()
+  })
+
+  test('login in returns a token', async () => {
+    const loginInfo = {
+      username: 'root',
+      password: 'sekret'
+    }
+
+    const result = await api.post('/api/login')
+      .send(loginInfo)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.token).toBeDefined()
+  })
+
+  test('wrong password returns an error', async () => {
+    const loginInfo = {
+      username: 'root',
+      password: 'plop'
+    }
+
+    const result = await api.post('/api/login')
+      .send(loginInfo)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Invalid username or password')
+  })
+
+  test('wrong username returns an error', async () => {
+    const loginInfo = {
+      username: 'r00t',
+      password: 'sekret'
+    }
+
+    const result = await api.post('/api/login')
+      .send(loginInfo)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Invalid username or password')
   })
 
 })
