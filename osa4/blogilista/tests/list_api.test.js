@@ -1,13 +1,12 @@
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const supertest = require('supertest')
-const bcrypt = require('bcrypt')
 const app = require('../app')
 
 const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const { usersInDB, addAUser } = require('./test_helper')
+const { usersInDB, blogsInDB, addAUser } = require('./test_helper')
 
 
 
@@ -28,7 +27,7 @@ describe('with a initialized blog database', () => {
 
   test('id property is defined', async () => {
 
-    const response = await helper.blogsInDB()
+    const response = await blogsInDB()
     expect(response[0].id).toBeDefined()
   })
 
@@ -46,7 +45,7 @@ describe('with a initialized blog database', () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      const finalList = await helper.blogsInDB()
+      const finalList = await blogsInDB()
       expect(finalList).toHaveLength(helper.initialBlogs.length +1)
 
       const titles = finalList.map(r => r.title)
@@ -65,7 +64,7 @@ describe('with a initialized blog database', () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      const finalList = await helper.blogsInDB()
+      const finalList = await blogsInDB()
       expect(finalList[helper.initialBlogs.length].likes).toBe(0)
     })
 
@@ -83,13 +82,13 @@ describe('with a initialized blog database', () => {
 
   describe('deleting blogs', () => {
     test('deleting one is responded with 200', async () => {
-      const blogsAtStart = await helper.blogsInDB()
+      const blogsAtStart = await blogsInDB()
       const blogToDelete = blogsAtStart[0]
 
       await api.delete(`/api/blogs/${blogToDelete.id}`)
         .expect(200)
 
-      const finalList = await helper.blogsInDB()
+      const finalList = await blogsInDB()
       const ids = finalList.map(r => r.id)
       expect(ids).not.toContain(blogToDelete.id)
     })
@@ -97,7 +96,7 @@ describe('with a initialized blog database', () => {
 
   describe('modifying blogs', () => {
     test('modifying likes', async () => {
-      const blogsAtStart = await helper.blogsInDB()
+      const blogsAtStart = await blogsInDB()
       const blogToModify = blogsAtStart[0]
       const modifiedBlog = { ...blogToModify, likes: 7 }
 
@@ -137,16 +136,16 @@ describe('with initialized user database', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const usersAtEnd = await helper.usersInDB()
+    const usersAtEnd = await usersInDB()
     expect(usersAtEnd[0].blogs[0].toString()).toContain(result.body.id)
 
-    const blogsAtEnd = await helper.blogsInDB()
+    const blogsAtEnd = await blogsInDB()
     expect(blogsAtEnd[0].user.toString()).toContain(usersAtEnd[0].id)
 
   })
 
   test('get to api returns correct amount of users', async () => {
-    const usersAtStart = await helper.usersInDB()
+    const usersAtStart = await usersInDB()
 
     const results = await api.get('/api/users/')
       .expect(200)
@@ -156,7 +155,7 @@ describe('with initialized user database', () => {
   })
 
   test('creating a new unique user', async () => {
-    const usersAtStart = await helper.usersInDB()
+    const usersAtStart = await usersInDB()
 
     const newUser = {
       username: 'lesjui',
@@ -170,7 +169,7 @@ describe('with initialized user database', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    const usersAtEnd = await helper.usersInDB()
+    const usersAtEnd = await usersInDB()
     expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
     const usernames = usersAtEnd.map(u => u.username)
@@ -178,7 +177,7 @@ describe('with initialized user database', () => {
   })
 
   test('username must be unique', async () => {
-    const usersAtStart = await helper.usersInDB()
+    const usersAtStart = await usersInDB()
 
     const newUser = {
       username: 'root',
@@ -194,12 +193,12 @@ describe('with initialized user database', () => {
 
     expect(result.body.error).toContain('`username` to be unique')
 
-    const usersAtEnd = await helper.usersInDB()
+    const usersAtEnd = await usersInDB()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 
   test('adding user without username fails', async () => {
-    const usersAtStart = await helper.usersInDB()
+    const usersAtStart = await usersInDB()
 
     const newUser = {
       name: 'no username',
@@ -214,12 +213,12 @@ describe('with initialized user database', () => {
 
     expect(result.body.error).toContain('`username` is required')
 
-    const usersAtEnd = await helper.usersInDB()
+    const usersAtEnd = await usersInDB()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 
   test('adding user without password fails', async () => {
-    const usersAtStart = await helper.usersInDB()
+    const usersAtStart = await usersInDB()
 
     const newUser = {
       username: 'noPass',
@@ -234,7 +233,7 @@ describe('with initialized user database', () => {
 
     expect(result.body.error).toContain('`password` missing')
 
-    const usersAtEnd = await helper.usersInDB()
+    const usersAtEnd = await usersInDB()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 
@@ -260,7 +259,7 @@ describe('with initialized user database', () => {
   })
 
   test('adding user with too short password fails', async () => {
-    const usersAtStart = await helper.usersInDB()
+    const usersAtStart = await usersInDB()
 
     const newUser = {
       username: 'shortPass',
@@ -276,7 +275,7 @@ describe('with initialized user database', () => {
 
     expect(result.body.error).toContain('`password` must be over 3 characters long')
 
-    const usersAtEnd = await helper.usersInDB()
+    const usersAtEnd = await usersInDB()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 })

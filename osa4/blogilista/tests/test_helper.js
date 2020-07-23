@@ -33,7 +33,7 @@ const usersInDB = async () => {
   return users.map(user => user.toJSON())
 }
 
-const addAUser = async () =>{
+const addAUser = async () => {
   const passwordHash = await bcrypt.hash('sekret', 10)
   const user = new User({ username: 'root', name: 'root', passwordHash })
   await user.save()
