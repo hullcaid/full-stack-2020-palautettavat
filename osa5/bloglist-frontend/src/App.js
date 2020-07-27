@@ -79,7 +79,8 @@ const App = () => {
       setUrl('')
     }
     catch (exception) {
-      notify('error', `${exception.message}`)
+      console.log(exception.response)
+      notify('error', `${exception.response.data.error}`)
     }
     
   }
