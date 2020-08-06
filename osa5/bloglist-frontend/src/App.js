@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Button from './components/Button'
 import CreateForm from './components/CreateForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Toggleble from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -32,6 +33,8 @@ const App = () => {
       setUser(user)
     }
   }, [])
+
+  const noteFormRef = useRef()
 
   const handleLogin = async (event) =>{
     event.preventDefault()
@@ -62,6 +65,7 @@ const App = () => {
 
   const handleCreateNew = async (event) => {
     event.preventDefault()
+    noteFormRef.current.toggleVisibility()
     console.log('creating new')
     const newListing = {
       title: title,
@@ -145,6 +149,7 @@ const App = () => {
       <p>{user.username} logged in <Button handleClick={handleLogout} label='logout'/></p>
       </div>
       <div>
+        <Toggleble buttonLabel="New blog" ref={noteFormRef}>
         <CreateForm 
           handleTitleInput={handleTitleInput}
           title={title}
@@ -154,6 +159,7 @@ const App = () => {
           url={url}
           handleCreate={handleCreateNew}
         />
+        </Toggleble>
       </div>
       <div>
         <br/>
