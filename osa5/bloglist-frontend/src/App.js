@@ -13,9 +13,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notificationType, setNotificationType] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
 
@@ -63,24 +60,16 @@ const App = () => {
     setUser(null)
   }
 
-  const handleCreateNew = async (event) => {
-    event.preventDefault()
+  const handleCreateNew = async (blogObject) => {
     noteFormRef.current.toggleVisibility()
     console.log('creating new')
-    const newListing = {
-      title: title,
-      author: author,
-      url: url
-    }
 
     try {
-      const response = await blogService.create(newListing)
+      const response = await blogService.create(blogObject)
       const newBlogs = blogs.concat(response)
       setBlogs(newBlogs)
       notify('notification', `Blog added: ${response.title} by ${response.author}`)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+
     }
     catch (exception) {
       console.log(exception.response)
@@ -105,20 +94,6 @@ const App = () => {
   const handlePasswordInput = (event) => {
     setPassword(event.target.value)
   }
-
-  const handleTitleInput = (event) => {
-    setTitle(event.target.value)
-  }
-
-  const handleAuthorInput = (event) => {
-    setAuthor(event.target.value)
-  }
-
-  const handleUrlInput = (event) => {
-    setUrl(event.target.value)
-  }
-
-
 
   if (user === null) {
     return (
@@ -150,15 +125,7 @@ const App = () => {
       </div>
       <div>
         <Toggleble buttonLabel="New blog" ref={noteFormRef}>
-        <CreateForm 
-          handleTitleInput={handleTitleInput}
-          title={title}
-          handleAuthorInput={handleAuthorInput}
-          author={author}
-          handleUrlInput={handleUrlInput}
-          url={url}
-          handleCreate={handleCreateNew}
-        />
+        <CreateForm createNew={handleCreateNew}/>
         </Toggleble>
       </div>
       <div>
