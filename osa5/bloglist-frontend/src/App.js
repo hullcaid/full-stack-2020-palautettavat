@@ -82,7 +82,6 @@ const App = () => {
       console.log(exception.response)
       notify('error', `${exception.response.data.error}`)
     }
-    
   }
 
   const handleLike = async (blog) => {
@@ -100,6 +99,11 @@ const App = () => {
     setBlogs(updatedList.sort((a, b) =>{
       return b.likes - a.likes
     }))
+  }
+
+  const handleRemove = async (blog) => {
+    await blogService.remove(blog.id)
+    setBlogs(blogs.filter(item => item.id =! blog.id))
   }
  
   const notify = (type, message) => {
@@ -155,7 +159,13 @@ const App = () => {
       <div>
         <br/>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+          <Blog 
+            key={blog.id} 
+            blog={blog}
+            showRemove={blog.user.username === user.username ? { display: ''} : { display: 'none'}} 
+            handleLike={handleLike} 
+            handleRemove={handleRemove}
+            />
         )}
       </div>
       

@@ -9,7 +9,7 @@ const blogStyle = {
   borderWidth: 1,
   marginBottom: 5
 }
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, showRemove, handleLike, handleRemove }) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none': '' }
@@ -29,6 +29,9 @@ const Blog = ({ blog, handleLike }) => {
         {blog.url}<br/>
         likes {blog.likes} <Button handleClick={() => handleLike(blog)} label='like'/><br/>
         {blog.user.name}
+        <div style={showRemove}>
+          <Button handleClick={() => handleRemove(blog)} label='Delete'/>
+        </div>
       </div>
     </div>
   )
