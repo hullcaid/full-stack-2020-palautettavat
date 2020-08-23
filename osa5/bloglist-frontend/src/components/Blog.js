@@ -9,7 +9,7 @@ const blogStyle = {
   borderWidth: 1,
   marginBottom: 5
 }
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLike }) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none': '' }
@@ -27,7 +27,7 @@ const Blog = ({ blog }) => {
       <div style={showWhenVisible}>
         {blog.title} {blog.author} <Button handleClick={toggleVisibility} label='hide'/> <br/>
         {blog.url}<br/>
-        likes {blog.likes} <Button handleClick={()=>console.log('liked')} label='like'/><br/>
+        likes {blog.likes} <Button handleClick={() => handleLike(blog)} label='like'/><br/>
         {blog.user.name}
       </div>
     </div>

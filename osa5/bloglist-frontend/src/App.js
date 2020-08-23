@@ -66,6 +66,11 @@ const App = () => {
 
     try {
       const response = await blogService.create(blogObject)
+      response.user = {
+        username: user.username,
+        name: user.name,
+        id: response.user
+      }
       const newBlogs = blogs.concat(response)
       setBlogs(newBlogs)
       notify('notification', `Blog added: ${response.title} by ${response.author}`)
@@ -78,6 +83,20 @@ const App = () => {
     
   }
 
+  const handleLike = async (blog) => {
+    const updatedBlog = {
+      user: blog.user._id,
+      likes: blog.likes +1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+    console.log(updatedBlog)
+
+    const response = await blogService.modify(updatedBlog, blog.id)
+    setBlogs(blogs.map(blog => blog.id !== response.id ? blog : response))
+  }
+ 
   const notify = (type, message) => {
     setNotificationType(type)
     setNotificationMessage(message)
@@ -131,7 +150,7 @@ const App = () => {
       <div>
         <br/>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} handleLike={handleLike} />
         )}
       </div>
       
