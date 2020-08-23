@@ -18,7 +18,9 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.sort((a, b) =>{
+        return b.likes - a.likes
+      }))
     )  
   }, [])
 
@@ -94,7 +96,10 @@ const App = () => {
     console.log(updatedBlog)
 
     const response = await blogService.modify(updatedBlog, blog.id)
-    setBlogs(blogs.map(blog => blog.id !== response.id ? blog : response))
+    const updatedList = blogs.map(blog => blog.id !== response.id ? blog : response)
+    setBlogs(updatedList.sort((a, b) =>{
+      return b.likes - a.likes
+    }))
   }
  
   const notify = (type, message) => {
