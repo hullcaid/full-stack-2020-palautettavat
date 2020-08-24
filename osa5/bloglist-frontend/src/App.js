@@ -18,10 +18,10 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort((a, b) =>{
+      setBlogs( blogs.sort((a, b) => {
         return b.likes - a.likes
       }))
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const App = () => {
 
   const noteFormRef = useRef()
 
-  const handleLogin = async (event) =>{
+  const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({
@@ -52,7 +52,7 @@ const App = () => {
       notify('notification', `Welcome ${user.name}!`)
     } catch (exception) {
       notify('error', 'Wrong username or password')
-    } 
+    }
   }
 
   const handleLogout = (event) => {
@@ -96,7 +96,7 @@ const App = () => {
 
     const response = await blogService.modify(updatedBlog, blog.id)
     const updatedList = blogs.map(blog => blog.id !== response.id ? blog : response)
-    setBlogs(updatedList.sort((a, b) =>{
+    setBlogs(updatedList.sort((a, b) => {
       return b.likes - a.likes
     }))
   }
@@ -107,7 +107,7 @@ const App = () => {
       setBlogs(blogs.filter(item => item.id !== blog.id))
     }
   }
- 
+
   const notify = (type, message) => {
     setNotificationType(type)
     setNotificationMessage(message)
@@ -133,10 +133,10 @@ const App = () => {
           message={notificationMessage}
         />
         <h2> Log in to application</h2>
-        <LoginForm 
-          handleLogin={handleLogin} 
-          username={username} 
-          handleUsernameInput={handleUsernameInput} 
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          handleUsernameInput={handleUsernameInput}
           password={password}
           handlePasswordInput={handlePasswordInput}
         />
@@ -151,26 +151,26 @@ const App = () => {
         message={notificationMessage}
       />
       <div>
-      <p>{user.username} logged in <Button handleClick={handleLogout} label='logout'/></p>
+        <p>{user.username} logged in <Button handleClick={handleLogout} label='logout'/></p>
       </div>
       <div>
         <Toggleble buttonLabel="New blog" ref={noteFormRef}>
-        <CreateForm createNew={handleCreateNew}/>
+          <CreateForm createNew={handleCreateNew}/>
         </Toggleble>
       </div>
       <div>
         <br/>
         {blogs.map(blog =>
-          <Blog 
-            key={blog.id} 
+          <Blog
+            key={blog.id}
             blog={blog}
-            showRemove={blog.user.username === user.username ? { display: ''} : { display: 'none'}} 
-            handleLike={handleLike} 
+            showRemove={blog.user.username === user.username ? { display: '' } : { display: 'none' }}
+            handleLike={handleLike}
             handleRemove={handleRemove}
-            />
+          />
         )}
       </div>
-      
+
     </div>
   )
 }

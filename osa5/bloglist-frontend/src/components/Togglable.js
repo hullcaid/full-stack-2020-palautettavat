@@ -29,4 +29,6 @@ const Togglable = React.forwardRef((props, ref) => {
   )
 })
 
+Togglable.displayName = 'Toggleable'
+
 export default Togglable

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const CreateForm = ({ createNew }) => {
@@ -37,22 +37,22 @@ const CreateForm = ({ createNew }) => {
       <div>
         <form onSubmit={handleCreate}>
           <div>
-            title: 
-              <input type="text" value={newTitle} name="title"
+            title:
+            <input type="text" value={newTitle} name="title"
               onChange={handleTitleInput}
-              />
+            />
           </div>
           <div>
-            author: 
-              <input type="text" value={newAuthor} name="author"
+            author:
+            <input type="text" value={newAuthor} name="author"
               onChange={handleAuthorInput}
-              />
+            />
           </div>
           <div>
-            url: 
-              <input type="text" value={newUrl} name="url"
+            url:
+            <input type="text" value={newUrl} name="url"
               onChange={handleUrlInput}
-              />
+            />
           </div>
           <button type="submit">create</button>
         </form>
