@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import PropTypes from 'prop-types'
 
 const CreateForm = ({ createNew }) => {
   const [newTitle, setNewTitle] = useState('')
@@ -58,6 +59,10 @@ const CreateForm = ({ createNew }) => {
       </div>
     </div>
   )
+}
+
+CreateForm.propTypes = {
+  createNew: PropTypes.func.isRequired
 }
 
 export default CreateForm

@@ -102,8 +102,10 @@ const App = () => {
   }
 
   const handleRemove = async (blog) => {
-    await blogService.remove(blog.id)
-    setBlogs(blogs.filter(item => item.id =! blog.id))
+    if(window.confirm(`Do you really want to remove ${blog.title} by ${blog.author}?`)) {
+      await blogService.remove(blog.id)
+      setBlogs(blogs.filter(item => item.id !== blog.id))
+    }
   }
  
   const notify = (type, message) => {
